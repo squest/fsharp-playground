@@ -17,12 +17,33 @@ let isPrime (num : int64) =
     | _ -> isPrime' num (i + 1L)
   isPrime' num 2L
 
-// Gue mau bikin function yg inputnya lim, and return the list of primes that are less than lim
-// sekalian return juga jumlah all primes yg kurang dari lim
-// pake sieve ya, pake array
-// salah lo, gue pengen yang returnnya tuh list of primes less than lim, and then jumlahnya
+let primeCheck (num : int64) = 
+  let rec primeCheck' (i : int64) =
+    match i with 
+    | _ when (i * i) > num -> true 
+    | _ when (num % i) = 0L -> false 
+    | _ -> primeCheck' (i + 2L)
+  match num with 
+  | 2L -> true
+  | _ when num < 2L -> false 
+  | _ when num % 2L = 0L -> false
+  | _ -> primeCheck' 3L
 
+// Create boolean array  gimana caranya?
+// gue cuma butuh elo bikin boolean array size lim
+// gue mau bikin array of boolean yang isinya true semua
+// nama arraynya arr 
 
+let arr = Array.create 1000000 true
+
+// gue pengen bikin lazy sieve of eratosthenes
+let sieve (n : int64) =
+  let rec sieve' (n : int64) (i : int64) (primes : int64 list) =
+    match i with
+    | _ when i * i > n -> primes
+    | _ when primes |> List.exists (fun x -> i % x = 0L) -> sieve' n (i + 2L) primes
+    | _ -> sieve' n (i + 2L) (i :: primes)
+  sieve' n 3L [2L]
 
 // Gue mau bikin function untuk timing the function call and print to console the time it takes to execute the function
 let time (f : 'a -> 'b) (x : 'a) =
@@ -33,4 +54,25 @@ let time (f : 'a -> 'b) (x : 'a) =
   printfn "Elapsed time: %A" sw.Elapsed
   res
 
+let primeList lim =
+  let primes = Array.create (int lim) true 
+  let rec markFalse i =
+    match i with 
+    | _ when i >= lim -> ()
+    | _ -> primes.[i] <- false; markFalse (i+2)
+  markFalse 4
+  let rec sieve i =
+    match i with 
+    | _ when i * i >= lim -> 
+      List.filter (fun x -> primes.[x]) [2..lim-1]
+      |> List.fold (fun acc x -> acc + x) 0
+    | _ when primes.[i] ->
+      let rec mark j =
+        match j with 
+        | _ when j >= lim -> ()
+        | _ -> primes.[j] <- false; mark (j + i + i)
+      mark (i * i)
+      sieve (i + 2)
+    | _ -> sieve (i + 2)
+  sieve 3
 
