@@ -76,3 +76,49 @@ let primeList lim =
     | _ -> sieve (i + 2)
   sieve 3
 
+let isOddPrime (num : int64) =
+  let rec check (i : int64) =
+    match i with 
+    | _ when i * i > num -> true 
+    | _ when num % i = 0L -> false 
+    | _ -> check (i + 2L)
+  check 3L
+
+let nextPrime (p : int64) =
+  let rec nextPrime' (i : int64) =
+    match i with 
+    | _ when isOddPrime i -> i 
+    | _ -> nextPrime' (i + 2L)
+  nextPrime' (p + 2L)
+
+// Create a function that accepts a number and returns a list of prime factors of the number
+let primeFactors (num : int64) = 
+  let rec findFactors (n : int64) (p : int64) (factors : int64 list) =
+    match p with 
+    | _ when p * p > num -> List.rev factors 
+    | _ when n % p = 0L -> findFactors (n / p) p (p :: factors)
+    | _ -> findFactors n (nextPrime p) factors
+  findFactors num 3L []
+
+let sieveFactors (n) =
+  let numbers = Array.ofList [0..n]
+  let rec sieve (i : int) =
+    match i with 
+    | _ when i > n -> List.ofArray numbers  
+    | _ ->
+      let rec mark (j : int) =
+        match j with 
+        | _ when j > n -> ()
+        | _ -> numbers.[j] <- numbers.[j] / numbers.[i]; mark (j + i)
+      mark (i + i)
+      sieve (i + 1)
+  sieve 2 |> List.tail |> List.fold (fun acc x -> acc * x) 1
+
+let sol7 idx =
+  let rec findPrime (i : int) (p : int64) =
+    match i with 
+    | _ when i = idx -> p 
+    | _ -> findPrime (i + 1) (nextPrime p)
+  findPrime 2 3L
+
+
