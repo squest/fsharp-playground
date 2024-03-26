@@ -17,6 +17,16 @@ let filter f xs =
       | false -> filter' f xs' acc
   filter' f xs []
 
+let remove f xs =
+  let rec remove' f xs acc = 
+    match xs with 
+    | [] -> List.rev acc
+    | x::xs' -> 
+      match f x with 
+      | true -> remove' f xs' acc
+      | false -> remove' f xs' (x :: acc)
+  remove' f xs []
+
 let last xs = 
   let rec last' xs =
     match xs with
