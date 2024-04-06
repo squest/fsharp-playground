@@ -183,3 +183,4 @@ let rec factorial n =
   | _ -> n * factorial (n - 1)
 
 let sol15 n = factorial (2 * n) / (factorial n * factorial n)
+
